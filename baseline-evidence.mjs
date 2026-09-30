@@ -1,0 +1,10 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {scenario,fingerprint} from './fixture.mjs';
+import {ruleProposal,manualProposal,validateInterpretation} from './interpretation.mjs';
+import {score} from './evaluate.mjs';
+const base=scenario(),gold=JSON.parse(await readFile(new URL('./interpretation-cases.json',import.meta.url),'utf8'));
+const rules=gold.cases.map(c=>{const proposal=ruleProposal(base,c.text);return {id:c.id,proposal,validation:validateInterpretation(base,proposal)};});
+const formInputs=[{id:'E1',input:{type:'add_outage',machine:'M1',start:2,end:4}},{id:'E2',input:{type:'add_job',machine1:'M2',duration1:1,machine2:'M1',duration2:1,deadline:4}},{id:'E6',input:{type:'add_outage',machine:'M1',start:2,end:4}}];
+const forms=formInputs.map(c=>{const proposal=manualProposal(base,c.input);return {...c,proposal,validation:validateInterpretation(base,proposal)};});
+const evidence={kind:'Actual CPU rule and form executions; not model attempts',sourceFingerprint:fingerprint(base),modelCalls:0,ruleParser:{...score(rules,gold.cases),scope:'Small hand-authored grammar on the original frozen 12-case slice; not general natural-language accuracy',cases:rules},manualForm:{denominator:3,acceptedReady:forms.filter(c=>c.validation.valid).length,scope:'Three explicitly entered supported typed inputs; not language interpretation',cases:forms}};
+await writeFile(new URL('./artifacts/baseline-executions.json',import.meta.url),JSON.stringify(evidence,null,2)+'\n');console.log(JSON.stringify({ruleParser:score(rules,gold.cases),manualForm:evidence.manualForm.acceptedReady,modelCalls:0}));
