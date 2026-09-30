@@ -1,0 +1,156 @@
+{
+  "browser": "actual installed Google Chrome via Playwright",
+  "modelCalls": 0,
+  "planBinding": {
+    "previousMakespan": 9,
+    "previousProposalId": "0df92c39-b959-4a73-b904-1558c1cae306",
+    "newProposalId": "dc07ae36-cb38-4956-b3dd-66b52d967ea2",
+    "receiptHashPreserved": true,
+    "receiptCurrent": false,
+    "previousLabelVisible": true,
+    "exactPlanSourceKeyboardFocusable": true
+  },
+  "deadlineAxis": {
+    "deadline": 30,
+    "bothAxes": [
+      {
+        "viewBox": "0 0 1206 260",
+        "width": 1206,
+        "height": 260,
+        "ticks": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30"
+        ]
+      },
+      {
+        "viewBox": "0 0 1206 260",
+        "width": 1206,
+        "height": 260,
+        "ticks": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30"
+        ]
+      }
+    ],
+    "marker": {
+      "x": 1188,
+      "viewBoxWidth": 1206
+    },
+    "nativeHorizontalScroll": true
+  },
+  "readability": {
+    "mobileWidth": 390,
+    "documentWidth": 390,
+    "fonts": {
+      "minimumTextPixels": 14,
+      "metricLabelPixels": "14px",
+      "hashPixels": "14px",
+      "axisPixels": "14px"
+    },
+    "declaredComputedColorPairs": [
+      {
+        "name": "axis",
+        "fg": "rgb(65, 84, 72)",
+        "bg": "rgb(255, 255, 255)",
+        "ratio": 8.11917747970118
+      },
+      {
+        "name": "metric label",
+        "fg": "rgb(61, 89, 75)",
+        "bg": "rgb(227, 233, 219)",
+        "ratio": 6.2091669711867885
+      },
+      {
+        "name": "J1A",
+        "fg": "rgb(255, 255, 255)",
+        "bg": "rgb(56, 99, 148)",
+        "ratio": 6.2120798122992005
+      },
+      {
+        "name": "J2B",
+        "fg": "rgb(255, 255, 255)",
+        "bg": "rgb(35, 117, 99)",
+        "ratio": 5.531918504176525
+      },
+      {
+        "name": "J3A",
+        "fg": "rgb(22, 46, 36)",
+        "bg": "rgb(185, 150, 61)",
+        "ratio": 5.166053750380843
+      },
+      {
+        "name": "J2A",
+        "fg": "rgb(255, 255, 255)",
+        "bg": "rgb(35, 117, 99)",
+        "ratio": 5.531918504176525
+      },
+      {
+        "name": "J1B",
+        "fg": "rgb(255, 255, 255)",
+        "bg": "rgb(56, 99, 148)",
+        "ratio": 6.2120798122992005
+      }
+    ],
+    "normalTextTarget": 4.5,
+    "fullWcagAudit": false,
+    "chartShrunk": false
+  }
+}

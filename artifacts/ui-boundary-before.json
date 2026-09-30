@@ -1,0 +1,20 @@
+{
+  "browser": "actual Google Chrome via Playwright",
+  "modelCalls": 0,
+  "planBindingBefore": {
+    "reproduced": true,
+    "currentProposalId": "cdb4c111-95b3-4ca7-ba90-59161ea4fee9",
+    "displayedPlanProposalId": "b672b67a-1455-48c3-afd2-65160c544c96",
+    "displayedMakespan": 9,
+    "receiptClaimedCurrent": true,
+    "displayedPrimaryTitle": "Confirmed scenario\nOPTIMAL \u00b7 verifier VALID"
+  },
+  "deadlineAxisBefore": {
+    "declaredDeadline": 30,
+    "viewBoxWidth": 560,
+    "markerX": [
+      1530
+    ],
+    "reproducedOutsideViewBox": true
+  }
+}

@@ -10,9 +10,9 @@ A small production-planning review desk for a **fictional two-machine cell**. A 
 
 The interface uses compact controls, a proposed-change diff, two Gantts on the **same relative-minute scale**, explicit downtime bands, numeric deltas, solver proof state, independent checks and a review history. Original operations are accessible in a keyboard-focusable SVG and an operation ledger. The form works without any model service.
 
-![Actual browser: confirmed outage extends makespan from 7 to 9 minutes](artifacts/media/04-outage-plan-reviewed.png)
+![Actual browser: confirmed outage extends makespan from 7 to 9 minutes](artifacts/media/readable-outage-reviewed.png)
 
-[CPU-only browser demonstration MP4](artifacts/media/scenario-review.mp4) · [390px screenshot](artifacts/media/mobile-390.png) · [Browser checks](artifacts/browser-checks.json)
+[Original CPU-only browser demonstration MP4](artifacts/media/scenario-review.mp4) · [Current 390px UNKNOWN screenshot](artifacts/media/readable-unknown-390.png) · [Browser checks](artifacts/browser-checks.json)
 
 ## Run locally
 
@@ -53,7 +53,7 @@ Only typed `add_outage` and explicit `add_job` J4 changes are allowed. Each carr
 - Exact multiples of 60 seconds may convert to integer minutes; other seconds require clarification. Both endpoint units are checked independently.
 - Confirmation binds the displayed proposal ID, full proposal hash and source fingerprint. Replacements or calendar changes return stale inspection errors.
 - The review action binds the confirmed proposal and exact plan fingerprint, including solver proof and verifier result. A new search budget creates a distinct plan. Repeated review of an unchanged plan retains one receipt.
-- Calendar changes leave old receipts explicitly historical/incompatible. Downloaded receipts carry current compatibility separately without changing the original receipt hash.
+- A pending replacement proposal leaves the previous plan visible with its exact confirmed source and proposal ID; it is explicitly labeled previous. Its receipt becomes historical until the inspected proposal and exact plan match. Calendar changes also invalidate compatibility. Downloaded receipts carry current compatibility separately without changing the original receipt hash.
 - Archived malformed, incomplete or provenance-mismatched model attempts cannot be confirmed. Raw evidence is retained separately from the display-safe rejection state.
 
 No model executes tests, a generated program, SQL or MIP. No MES write, production release, equipment control, certification, factory-throughput or ROI claim is made. A local review receipt is a demo record, not an authenticated enterprise approval or tamper-proof audit service.
@@ -85,6 +85,8 @@ Provider-reported totals were 7,019 prompt tokens and 3,864 output tokens; the l
 
 ## Verification and scope
 
-`npm test` currently passes **33 Node tests**. On Linux, `python3 -m unittest discover -s test -p 'test_model_client.py' -v` passes **6 CPU lease/timeout tests**. Browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport with no viewport shrinking. The architecture was inspected at both 360px and 390px; actual published GitHub loading also passed at 360px, 390px and desktop ([checks](artifacts/published-checks.json)).
+`npm test` currently passes **35 Node tests**. On Linux, `python3 -m unittest discover -s test -p 'test_model_client.py' -v` passes **6 CPU lease/timeout tests**. Browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport with no viewport shrinking. The architecture was inspected at both 360px and 390px; actual published GitHub loading also passed at 360px, 390px and desktop ([checks](artifacts/published-checks.json)).
+
+[CPU UI regressions](artifacts/ui-boundary-fixed.json) separately reproduce and verify previous-plan binding and a deadline at minute 30. Both Gantts include deadlines in the same shared horizon, preserve at least 38 pixels per minute, and scroll horizontally alongside the exact interval ledger. Current 390px browser checks measure meaningful text at least 14px; checked axis, metric and operation-label colors exceed the [4.5:1 normal-text contrast target](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html). This is a focused readability check, not a complete accessibility audit. [Before evidence](artifacts/ui-boundary-before.json), [previous-plan repair](artifacts/media/plan-binding-fixed.png), and [deadline marker repair](artifacts/media/deadline-axis-fixed.png) remain available.
 
 Read [independent review notes](docs/review.md), [enterprise source chronology](docs/enterprise-context.md), and [media provenance](docs/asset-provenance.md). The fixtures, allowlist, planner and verifier are an original smaller design. They are not customer data or a reconstruction of private vendor architecture. MIT license covers this original implementation and glyphs.

@@ -18,3 +18,9 @@ Final independent read-only review after these fixes found no blocking issue. Th
 A read-only reviewer recomputed all six frozen source-file digests, input/snapshot hashes, every preserved attempt against its embedded evaluation record, per-case validation and aggregate scores. All identities and computations matched. Twelve requests and twelve done/stop responses completed without truncation. Raw statuses were READY for all twelve: three expected status labels matched and nine were false READY. The full gate admitted zero, including zero of the three supported requests. This does not imply three usable interpretations or general safety: rejecting everything has zero recall. The rule/form comparison is a small original grammar-aligned fixture, not population-level natural-language performance.
 
 No development calls, retries, post-evaluation prompt changes or additional capture inference were performed. No model output was repaired to create a passing result.
+
+## Final CPU UI review
+
+Actual browser reproductions retained an outage plan after a new, unconfirmed J4 proposal and placed a minute-30 deadline outside the old chart. The repair retains an immutable confirmed proposal snapshot, labels previous plans and receipts with that proposal identity, and makes receipt compatibility require the currently inspected proposal. Both chart horizons now include deadlines without shrinking their minute scale.
+
+The 390px capture checks meaningful text at least 14px and the declared axis, metric and operation-label contrast pairs above 4.5:1. It does not claim a complete accessibility audit. Before and fixed receipts and screenshots remain separate. A read-only independent review found no blocker; all 35 Node tests passed and all six frozen model-evaluation source digests remained unchanged. This repair and its new media used zero inference calls.

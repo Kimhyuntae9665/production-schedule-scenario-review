@@ -9,6 +9,13 @@
       "fix": "Display-only archive/method labels; frozen model output and validation remain unchanged"
     },
     {
+      "outcome": "failed capture timing assertion",
+      "caseId": "E3",
+      "observed": "An unchanged rejection badge matched the previous response before fresh source text rendered",
+      "fix": "Capture waits for each exact archived source text before keyboard inspection; application authority and frozen outputs unchanged",
+      "modelCalls": 0
+    },
+    {
       "outcome": "passed",
       "evidence": "model-browser-checks.json",
       "modelCalls": 0

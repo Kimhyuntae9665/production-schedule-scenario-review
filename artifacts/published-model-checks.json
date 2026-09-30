@@ -1,0 +1,67 @@
+{
+  "repo": "https://github.com/Kimhyuntae9665/production-schedule-scenario-review",
+  "browser": "actual installed Google Chrome via Playwright",
+  "modelCalls": 0,
+  "checks": [
+    {
+      "width": 360,
+      "pageStatus": 200,
+      "images": [
+        {
+          "kind": "architecture",
+          "loaded": true,
+          "naturalWidth": 390,
+          "naturalHeight": 780,
+          "displayWidth": 294
+        },
+        {
+          "kind": "modelReplay",
+          "loaded": true,
+          "naturalWidth": 1440,
+          "naturalHeight": 1992,
+          "displayWidth": 293.984375
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "pageStatus": 200,
+      "images": [
+        {
+          "kind": "architecture",
+          "loaded": true,
+          "naturalWidth": 390,
+          "naturalHeight": 780,
+          "displayWidth": 324
+        },
+        {
+          "kind": "modelReplay",
+          "loaded": true,
+          "naturalWidth": 1440,
+          "naturalHeight": 1992,
+          "displayWidth": 323.984375
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "pageStatus": 200,
+      "images": [
+        {
+          "kind": "architecture",
+          "loaded": true,
+          "naturalWidth": 390,
+          "naturalHeight": 780,
+          "displayWidth": 390
+        },
+        {
+          "kind": "modelReplay",
+          "loaded": true,
+          "naturalWidth": 1440,
+          "naturalHeight": 1992,
+          "displayWidth": 837.984375
+        }
+      ]
+    }
+  ]
+}

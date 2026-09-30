@@ -42,6 +42,12 @@
       "originalSourcePreserved": true
     }
   ],
+  "archivedSourceCalendarChange": {
+    "validation": "STALE",
+    "display": "STALE / ARCHIVE_REJECTED",
+    "confirmationDisabled": true,
+    "originalFingerprintPreserved": true
+  },
   "explicitManualFallback": {
     "solver": "OPTIMAL",
     "verifier": "VALID",

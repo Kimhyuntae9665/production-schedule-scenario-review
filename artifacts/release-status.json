@@ -2,7 +2,7 @@
   "state": "Frozen Qwen evaluation, CPU implementation and browser evidence complete",
   "developmentModelCalls": 0,
   "evaluationModelCalls": 12,
-  "nodeTestsPassed": 33,
+  "nodeTestsPassed": 35,
   "linuxCpuTransportTestsPassed": 6,
   "plannerActualCalls": 6,
   "modelSnapshotCommit": "a5d4fb1fe10a84afb879ce786bac58c20d4e1493",
