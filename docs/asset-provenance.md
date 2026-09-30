@@ -7,3 +7,11 @@ The user-approved layout reference is Library `libfile_e1f58134c8f48191abda5ff1b
 Screenshots and video capture this implementation in an actual browser. Planner execution artifacts contain real deterministic calls; handwritten gold lives separately and is never used as a solver log. Model attempt records preserve actual local bounded inference when authorized. Neither scheduling results nor customer-story marketing figures imply factory throughput, ROI, production release or equipment control.
 
 The inference lease transport is reused from the author's MIT-licensed P05 implementation. P07 has its own local code and tests and imports no other project at runtime. Model/evaluation results remain independently generated for P07.
+
+## Frozen model run and media labels
+
+The original CPU screenshots and scenario-review.mp4 predate model evaluation and remain unchanged. They demonstrate actual deterministic planning and review flows, with no Qwen call in that recording.
+
+The separate model-E1/E3/E10/E6 rejection screenshots and recorded-model-review.mp4 are actual browser replays of the 12 frozen local Qwen outputs. They make zero additional model calls; all model proposals remain rejected, and the manual fallback is explicit. Browser automation is disclosed and creates no actual human approval or model receipt. The raw model artifacts are original outputs, not handwritten gold or repaired synthetic successes.
+
+The diagram continues to name actual implemented roles. Qwen is optional, and archived outputs must pass the validation/confirmation boundary before any planning; this observed run admitted none. No diagram label change was needed.

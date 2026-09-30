@@ -1,0 +1,17 @@
+{
+  "scope": "CPU browser capture attempts, separate from frozen model evaluation",
+  "attempts": [
+    {
+      "outcome": "failed browser assertion",
+      "caseId": "E1",
+      "expectedLabel": "ARCHIVE_REJECTED",
+      "observedLabel": "INVALID with rule-parser envelope method",
+      "fix": "Display-only archive/method labels; frozen model output and validation remain unchanged"
+    },
+    {
+      "outcome": "passed",
+      "evidence": "model-browser-checks.json",
+      "modelCalls": 0
+    }
+  ]
+}

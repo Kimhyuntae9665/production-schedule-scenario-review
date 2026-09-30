@@ -1,1 +1,20 @@
-{"state":"CPU release verified; bounded model evaluation prepared but not run","developmentModelCalls":0,"evaluationModelCalls":0,"nodeTestsPassed":33,"linuxCpuTransportTestsPassed":6,"plannerActualCalls":6,"modelSnapshotCommit":"a5d4fb1fe10a84afb879ce786bac58c20d4e1493","implementationCommit":"7bc61d5c6211cc43b582f8c7e67f245787f6e0ba","originalGoldCommit":"a188c88","gpuLease":"Awaiting coordinating task grant; no inference attempted","scope":"original fictional scheduling review, local only"}
+{
+  "state": "Frozen Qwen evaluation, CPU implementation and browser evidence complete",
+  "developmentModelCalls": 0,
+  "evaluationModelCalls": 12,
+  "nodeTestsPassed": 33,
+  "linuxCpuTransportTestsPassed": 6,
+  "plannerActualCalls": 6,
+  "modelSnapshotCommit": "a5d4fb1fe10a84afb879ce786bac58c20d4e1493",
+  "implementationCommit": "7bc61d5c6211cc43b582f8c7e67f245787f6e0ba",
+  "originalGoldCommit": "a188c88",
+  "gpuLease": "Released after 12 acknowledged done responses, free shared lock and absent blocked marker",
+  "scope": "original fictional scheduling review, local only",
+  "additionalDemoModelCalls": 0,
+  "completedResponses": 12,
+  "rawStatusMatches": 3,
+  "falseReadyStatuses": 9,
+  "guardedAdmitted": 0,
+  "supportedAdmitted": 0,
+  "supportedTotal": 3
+}

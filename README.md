@@ -12,7 +12,7 @@ The interface uses compact controls, a proposed-change diff, two Gantts on the *
 
 ![Actual browser: confirmed outage extends makespan from 7 to 9 minutes](artifacts/media/04-outage-plan-reviewed.png)
 
-[Actual browser demonstration MP4](artifacts/media/scenario-review.mp4) · [390px screenshot](artifacts/media/mobile-390.png) · [Browser checks](artifacts/browser-checks.json)
+[CPU-only browser demonstration MP4](artifacts/media/scenario-review.mp4) · [390px screenshot](artifacts/media/mobile-390.png) · [Browser checks](artifacts/browser-checks.json)
 
 ## Run locally
 
@@ -60,9 +60,28 @@ No model executes tests, a generated program, SQL or MIP. No MES write, producti
 
 ## Model comparison
 
-The original 12 interpretation cases are frozen in [interpretation-cases.json](interpretation-cases.json), with 3 explicitly supported, 2 clarification and 7 unsupported requests. Development and evaluation are separate: **zero development model calls** are planned; the bounded evaluation uses at most 12 one-at-a-time `qwen3:4b` calls, context 4,096, output 640, timeout 60 seconds, temperature 0 and seed 42. Evaluation snapshots must be committed before inference. Failed attempts and invalid JSON are retained; there are no silent retries or overwritten archives.
+The original 12 interpretation cases were frozen before prompting in [interpretation-cases.json](interpretation-cases.json), with 3 explicitly supported, 2 clarification and 7 unsupported requests. Development and evaluation are separate: **zero development model calls** and **12 evaluation calls** were executed. The one-at-a-time `qwen3:4b` calls used context 4,096, output 640, timeout 60 seconds, temperature 0 and seed 42. Evaluation input and source snapshots were committed at `a5d4fb1` before inference, binding implementation `7bc61d5`. Failed attempts and invalid JSON are retained; there are no silent retries or overwritten archives.
 
-**Current publication state: CPU implementation and browser evidence complete; model calls have not run because the shared GPU lease has not been granted.** The [executed CPU baseline](artifacts/baseline-executions.json) classifies 12/12 of these frozen requests as expected; the three explicit supported form inputs are valid. This is a hand-authored grammar on its declared small slice, not general language accuracy. Actual model scores remain pending and will use a separate denominator after authorized evaluation. UI “Recorded Qwen” is optional and safely unavailable while no model archive exists. A model interpretation score never measures planner correctness or production performance.
+**Observed result: every Qwen response said READY; none was usable under the frozen validation gate.** All 12 HTTP requests completed with valid JSON, done acknowledgement and no timeout/truncation. There were no retries, repairs, additional demo inference calls or prompt tuning against these evaluation answers.
+
+| Measure | Fixed Qwen run | Rule grammar | Explicit form |
+|---|---:|---:|---:|
+| Expected status label matched | 3/12 (25%) | 12/12 | Not a language classification task |
+| False READY on 9 clarification/unsupported cases | 9/9 | 0/9 | Not applicable |
+| Full validated READY proposals | 0/12 | 3/12 | 3/3 explicit supported inputs |
+| Supported requests admitted | 0/3 | 3/3 | 3/3 |
+
+The raw 3/12 figure is **status-only**, not three correct usable interpretations. E1 copied the outage values but returned a phrase end offset of 40 inconsistent with its quoted source. E3 invented a deadline of 1 for “urgent” and duplicated J4. E6 converted seconds but retained a READY status together with unresolved unit issues. All original outputs remain in [the 12 attempt files](artifacts/model-attempts); [evaluation](artifacts/model-evaluation.json) preserves request identity, source hashes, raw versus guarded scores and rejection reasons. No generated field was automatically repaired or accepted.
+
+Zero unsafe admissions here results from **rejecting every model proposal**, including all three supported requests. It does not establish general robustness, useful model recall or general model accuracy. The [executed CPU baseline](artifacts/baseline-executions.json) uses a hand-authored grammar aligned with this original tiny fixture and shares validation; it is not independent natural-language generalization. The form comparison covers three explicitly entered typed inputs only. Interpretation quality, planner correctness and any factory performance are separate questions.
+
+Provider-reported totals were 7,019 prompt tokens and 3,864 output tokens; the largest individual counts were 602/545. Client-measured per-request elapsed time was 2.81–8.54 seconds, including local transport/loading. These are local inference observations, not factory performance or a configured timeout presented as a measurement. [Runtime metadata](artifacts/runtime-provenance.json) reports Ollama 0.17.7 and the installed Qwen3 4.0B Q4_K_M digest observed after the run; archived requests identify the model tag, not per-request immutable weight attestation.
+
+![Actual browser replay of a rejected frozen Qwen proposal](artifacts/media/model-E1-rejected.png)
+
+[Recorded-output review MP4](artifacts/media/recorded-model-review.mp4) · [Model browser checks](artifacts/model-browser-checks.json) · [Model rejection at 390px](artifacts/media/model-mobile-390.png). This is an actual browser replay of the frozen model outputs, with **0 model calls during recording**. The script checks rejected E1/E3/E10/E6, keeps confirmation disabled, preserves original source text, and then demonstrates an explicit manual fallback producing 9 minutes with a VALID verifier. The automated demo creates no human approval or model review receipt. Earlier screenshots and the CPU-only demonstration remain unchanged.
+
+[Batch-completion evidence](artifacts/model-runtime-completion.json) verifies 12 done responses, the free shared lock and absent timeout marker. P07 released its GPU lease after that check; no further inference is scheduled. A model interpretation score never measures planner correctness or production performance.
 
 ## Verification and scope
 

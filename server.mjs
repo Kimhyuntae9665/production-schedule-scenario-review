@@ -5,7 +5,7 @@ const check=(data,plan)=>plan.schedule.length?verify(data,plan.schedule,{reporte
 export function recordedProposal(entry,base){
  if(!entry?.proposal)return {...ruleProposal(base,''),status:'MODEL_UNAVAILABLE',issues:['No recorded proposal for this case. Manual form remains usable.']};
  const p={...entry.proposal,method:'recorded-qwen3:4b'};
- if(entry.requestMatch!==true||entry.status!=='complete'||entry.parseState!=='valid-json'||entry.validation?.valid!==true)return {...ruleProposal(base,''),sourceFingerprint:typeof p.sourceFingerprint==='string'?p.sourceFingerprint:fingerprint(base),sourceText:typeof p.sourceText==='string'?p.sourceText:'',status:'ARCHIVE_REJECTED',archivedProposal:p,issues:['Archived attempt did not pass complete-output, schema and source-provenance checks. Its original output is retained separately; use the manual form for a fresh proposal.']};
+ if(entry.requestMatch!==true||entry.status!=='complete'||entry.parseState!=='valid-json'||entry.validation?.valid!==true)return {...ruleProposal(base,''),method:'recorded-qwen3:4b',sourceFingerprint:typeof p.sourceFingerprint==='string'?p.sourceFingerprint:fingerprint(base),sourceText:typeof p.sourceText==='string'?p.sourceText:'',status:'ARCHIVE_REJECTED',archivedProposal:entry.proposal,issues:['Archived attempt did not pass complete-output, schema and source-provenance checks. Its original output is retained separately; use the manual form for a fresh proposal.',...(Array.isArray(entry.validation?.issues)?entry.validation.issues.filter(x=>typeof x==='string'):[])]};
  return p;
 }
 export function createDesk(){

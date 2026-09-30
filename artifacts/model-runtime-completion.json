@@ -1,0 +1,12 @@
+{
+  "evaluationRequests": 12,
+  "acknowledgedDoneResponses": 12,
+  "transportTimeouts": 0,
+  "outputTruncations": 0,
+  "sharedLockFreeAfterBatch": true,
+  "blockedMarkerAbsent": true,
+  "additionalDemoModelCalls": 0,
+  "developmentModelCalls": 0,
+  "futureInferenceScheduled": false,
+  "leaseReleased": true
+}

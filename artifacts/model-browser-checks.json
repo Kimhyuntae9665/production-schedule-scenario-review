@@ -1,0 +1,54 @@
+{
+  "browser": "actual installed Google Chrome via Playwright",
+  "mediaKind": "Replay of actual frozen Qwen outputs; no live inference in this capture",
+  "modelCallsInCapture": 0,
+  "humanAcceptedModelProposals": 0,
+  "browserAutomation": true,
+  "replayCases": [
+    {
+      "caseId": "E1",
+      "archivedRawStatus": "READY",
+      "displayStatus": "ARCHIVE_REJECTED",
+      "confirmationDisabled": true,
+      "changedPlan": null,
+      "receipt": null,
+      "originalSourcePreserved": true
+    },
+    {
+      "caseId": "E3",
+      "archivedRawStatus": "READY",
+      "displayStatus": "ARCHIVE_REJECTED",
+      "confirmationDisabled": true,
+      "changedPlan": null,
+      "receipt": null,
+      "originalSourcePreserved": true
+    },
+    {
+      "caseId": "E10",
+      "archivedRawStatus": "READY",
+      "displayStatus": "ARCHIVE_REJECTED",
+      "confirmationDisabled": true,
+      "changedPlan": null,
+      "receipt": null,
+      "originalSourcePreserved": true
+    },
+    {
+      "caseId": "E6",
+      "archivedRawStatus": "READY",
+      "displayStatus": "ARCHIVE_REJECTED",
+      "confirmationDisabled": true,
+      "changedPlan": null,
+      "receipt": null,
+      "originalSourcePreserved": true
+    }
+  ],
+  "explicitManualFallback": {
+    "solver": "OPTIMAL",
+    "verifier": "VALID",
+    "makespan": 9,
+    "receiptCreated": false
+  },
+  "rejectionSourceKeyboardFocusable": true,
+  "mobileWidth": 390,
+  "viewportShrinking": false
+}
