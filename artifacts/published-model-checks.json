@@ -1,5 +1,7 @@
 {
   "repo": "https://github.com/Kimhyuntae9665/production-schedule-scenario-review",
+  "publishedCommit": "678f762b2b2090a0a37f0ffeffb48ccbb510789f",
+  "checkedUrl": "https://github.com/Kimhyuntae9665/production-schedule-scenario-review/tree/678f762b2b2090a0a37f0ffeffb48ccbb510789f",
   "browser": "actual installed Google Chrome via Playwright",
   "modelCalls": 0,
   "checks": [
@@ -18,7 +20,7 @@
           "kind": "modelReplay",
           "loaded": true,
           "naturalWidth": 1440,
-          "naturalHeight": 1992,
+          "naturalHeight": 2261,
           "displayWidth": 293.984375
         }
       ]
@@ -38,7 +40,7 @@
           "kind": "modelReplay",
           "loaded": true,
           "naturalWidth": 1440,
-          "naturalHeight": 1992,
+          "naturalHeight": 2261,
           "displayWidth": 323.984375
         }
       ]
@@ -58,7 +60,7 @@
           "kind": "modelReplay",
           "loaded": true,
           "naturalWidth": 1440,
-          "naturalHeight": 1992,
+          "naturalHeight": 2261,
           "displayWidth": 837.984375
         }
       ]
