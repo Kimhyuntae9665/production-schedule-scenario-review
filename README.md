@@ -2,6 +2,8 @@
 
 <img src="docs/architecture.png" alt="Form and optional Qwen proposals go through human confirmation, a deterministic planner, an independent verifier, a Gantt comparison and a local review receipt." width="390">
 
+[![CPU verification](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml/badge.svg)](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml)
+
 [Editable architecture SVG](docs/architecture.svg) · [Asset provenance](docs/asset-provenance.md)
 
 A small production-planning review desk for a **fictional two-machine cell**. A bounded language proposal or manual form prepares a typed change. A person confirms its meaning and half-open minute convention; an actually executed exact planner then produces a schedule. An independently implemented verifier checks the operations. A separate human action records review of the exact proposal and exact plan.
@@ -64,6 +66,6 @@ The original 12 interpretation cases are frozen in [interpretation-cases.json](i
 
 ## Verification and scope
 
-`npm test` currently passes **33 Node tests**. On Linux, `python3 -m unittest discover -s test -p 'test_model_client.py' -v` passes **6 CPU lease/timeout tests**. Browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport with no viewport shrinking. The architecture was inspected at both 360px and 390px.
+`npm test` currently passes **33 Node tests**. On Linux, `python3 -m unittest discover -s test -p 'test_model_client.py' -v` passes **6 CPU lease/timeout tests**. Browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport with no viewport shrinking. The architecture was inspected at both 360px and 390px; actual published GitHub loading also passed at 360px, 390px and desktop ([checks](artifacts/published-checks.json)).
 
 Read [independent review notes](docs/review.md), [enterprise source chronology](docs/enterprise-context.md), and [media provenance](docs/asset-provenance.md). The fixtures, allowlist, planner and verifier are an original smaller design. They are not customer data or a reconstruction of private vendor architecture. MIT license covers this original implementation and glyphs.
