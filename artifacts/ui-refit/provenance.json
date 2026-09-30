@@ -150,8 +150,17 @@
     "capture": "Actual automated desktop Chrome UI actions; separate mobile screenshot; no generated logs or narration"
   },
   "uiFiles": {
-    "index.html": "9674a3c7c8b9a0e7ca68bff45f6c9287d23f80572822f4e9f90ad2a877c7a59a",
-    "app.mjs": "1958a476644c1e295776699bd0abe90af10b11d0fc3949a0b483d3717ebf33fd",
-    "style.css": "c45b71d9b94c30722aaa067d78699193e9734620f95475c7981d6c45f8ff19e7"
+    "index.html": {
+      "sha256": "9674a3c7c8b9a0e7ca68bff45f6c9287d23f80572822f4e9f90ad2a877c7a59a",
+      "bytes": 5369
+    },
+    "app.mjs": {
+      "sha256": "1958a476644c1e295776699bd0abe90af10b11d0fc3949a0b483d3717ebf33fd",
+      "bytes": 12655
+    },
+    "style.css": {
+      "sha256": "c45b71d9b94c30722aaa067d78699193e9734620f95475c7981d6c45f8ff19e7",
+      "bytes": 4545
+    }
   }
 }
