@@ -1,0 +1,385 @@
+{
+  "actualCalls": 6,
+  "goldReadAtRuntime": false,
+  "calls": [
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "A",
+      "sourceFingerprint": "16bdad0413621fef2e49eabbb81e160b9ffb95b82796215f012aa061cad508aa",
+      "options": {},
+      "result": {
+        "status": "OPTIMAL",
+        "schedule": [
+          {
+            "id": "J1A",
+            "jobId": "J1",
+            "machine": "M1",
+            "start": 0,
+            "end": 3
+          },
+          {
+            "id": "J2B",
+            "jobId": "J2",
+            "machine": "M1",
+            "start": 3,
+            "end": 5
+          },
+          {
+            "id": "J3A",
+            "jobId": "J3",
+            "machine": "M1",
+            "start": 5,
+            "end": 7
+          },
+          {
+            "id": "J2A",
+            "jobId": "J2",
+            "machine": "M2",
+            "start": 0,
+            "end": 2
+          },
+          {
+            "id": "J1B",
+            "jobId": "J1",
+            "machine": "M2",
+            "start": 3,
+            "end": 5
+          }
+        ],
+        "makespan": 7,
+        "lowerBound": 7,
+        "proof": {
+          "complete": true,
+          "enumerated": 12,
+          "totalSequences": 12,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 10000,
+          "timeoutMs": 1000,
+          "termination": "exhausted",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration",
+          "elapsedMs": 6.583
+        },
+        "issues": []
+      },
+      "verification": {
+        "status": "VALID",
+        "issues": [],
+        "makespan": 7,
+        "checkedOperations": 5
+      }
+    },
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "B",
+      "sourceFingerprint": "0488626a34b9f0a9f8bf300fb6f34b3428f6ff5b0c6657aedded63318bbf3fa8",
+      "options": {},
+      "result": {
+        "status": "OPTIMAL",
+        "schedule": [
+          {
+            "id": "J3A",
+            "jobId": "J3",
+            "machine": "M1",
+            "start": 0,
+            "end": 2
+          },
+          {
+            "id": "J1A",
+            "jobId": "J1",
+            "machine": "M1",
+            "start": 4,
+            "end": 7
+          },
+          {
+            "id": "J2B",
+            "jobId": "J2",
+            "machine": "M1",
+            "start": 7,
+            "end": 9
+          },
+          {
+            "id": "J2A",
+            "jobId": "J2",
+            "machine": "M2",
+            "start": 0,
+            "end": 2
+          },
+          {
+            "id": "J1B",
+            "jobId": "J1",
+            "machine": "M2",
+            "start": 7,
+            "end": 9
+          }
+        ],
+        "makespan": 9,
+        "lowerBound": 9,
+        "proof": {
+          "complete": true,
+          "enumerated": 12,
+          "totalSequences": 12,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 10000,
+          "timeoutMs": 1000,
+          "termination": "exhausted",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration",
+          "elapsedMs": 0.224
+        },
+        "issues": []
+      },
+      "verification": {
+        "status": "VALID",
+        "issues": [],
+        "makespan": 9,
+        "checkedOperations": 5
+      }
+    },
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "C",
+      "sourceFingerprint": "b85539eacb09c482e61ad36390a33a54db6196612779cb0e896b37829a634fd0",
+      "options": {},
+      "result": {
+        "status": "OPTIMAL",
+        "schedule": [
+          {
+            "id": "J1A",
+            "jobId": "J1",
+            "machine": "M1",
+            "start": 0,
+            "end": 3
+          },
+          {
+            "id": "J4B",
+            "jobId": "J4",
+            "machine": "M1",
+            "start": 3,
+            "end": 4
+          },
+          {
+            "id": "J2B",
+            "jobId": "J2",
+            "machine": "M1",
+            "start": 4,
+            "end": 6
+          },
+          {
+            "id": "J3A",
+            "jobId": "J3",
+            "machine": "M1",
+            "start": 6,
+            "end": 8
+          },
+          {
+            "id": "J2A",
+            "jobId": "J2",
+            "machine": "M2",
+            "start": 0,
+            "end": 2
+          },
+          {
+            "id": "J4A",
+            "jobId": "J4",
+            "machine": "M2",
+            "start": 2,
+            "end": 3
+          },
+          {
+            "id": "J1B",
+            "jobId": "J1",
+            "machine": "M2",
+            "start": 3,
+            "end": 5
+          }
+        ],
+        "makespan": 8,
+        "lowerBound": 8,
+        "proof": {
+          "complete": true,
+          "enumerated": 144,
+          "totalSequences": 144,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 10000,
+          "timeoutMs": 1000,
+          "termination": "exhausted",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration",
+          "elapsedMs": 2.064
+        },
+        "issues": []
+      },
+      "verification": {
+        "status": "VALID",
+        "issues": [],
+        "makespan": 8,
+        "checkedOperations": 7
+      }
+    },
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "A",
+      "sourceFingerprint": "16bdad0413621fef2e49eabbb81e160b9ffb95b82796215f012aa061cad508aa",
+      "options": {
+        "horizon": 6
+      },
+      "result": {
+        "status": "INFEASIBLE",
+        "schedule": [],
+        "lowerBound": 7,
+        "proof": {
+          "complete": true,
+          "enumerated": 0,
+          "totalSequences": 12,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 10000,
+          "timeoutMs": 1000,
+          "termination": "lower-bound-exceeds-horizon",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration"
+        },
+        "issues": [
+          "Makespan lower bound 7 exceeds horizon 6"
+        ]
+      },
+      "verification": {
+        "status": "NOT_RUN",
+        "reason": "No incumbent"
+      }
+    },
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "A",
+      "sourceFingerprint": "16bdad0413621fef2e49eabbb81e160b9ffb95b82796215f012aa061cad508aa",
+      "options": {
+        "maxSequences": 1
+      },
+      "result": {
+        "status": "UNKNOWN",
+        "schedule": [
+          {
+            "id": "J1A",
+            "jobId": "J1",
+            "machine": "M1",
+            "start": 0,
+            "end": 3
+          },
+          {
+            "id": "J2B",
+            "jobId": "J2",
+            "machine": "M1",
+            "start": 7,
+            "end": 9
+          },
+          {
+            "id": "J3A",
+            "jobId": "J3",
+            "machine": "M1",
+            "start": 9,
+            "end": 11
+          },
+          {
+            "id": "J1B",
+            "jobId": "J1",
+            "machine": "M2",
+            "start": 3,
+            "end": 5
+          },
+          {
+            "id": "J2A",
+            "jobId": "J2",
+            "machine": "M2",
+            "start": 5,
+            "end": 7
+          }
+        ],
+        "makespan": 11,
+        "lowerBound": 7,
+        "proof": {
+          "complete": false,
+          "enumerated": 1,
+          "totalSequences": 12,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 1,
+          "timeoutMs": 1000,
+          "termination": "sequence-budget",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration",
+          "elapsedMs": 0.032
+        },
+        "issues": [
+          "Search incomplete; any incumbent is feasible but optimality has not been certified"
+        ]
+      },
+      "verification": {
+        "status": "VALID",
+        "issues": [],
+        "makespan": 11,
+        "checkedOperations": 5
+      }
+    },
+    {
+      "kind": "actual deterministic planner invocation",
+      "scenarioId": "A",
+      "sourceFingerprint": "16bdad0413621fef2e49eabbb81e160b9ffb95b82796215f012aa061cad508aa",
+      "options": {
+        "timeoutMs": 0
+      },
+      "result": {
+        "status": "UNKNOWN",
+        "schedule": [],
+        "lowerBound": 7,
+        "proof": {
+          "complete": false,
+          "enumerated": 0,
+          "totalSequences": 12,
+          "assumptions": [
+            "Two fixed exclusive machines M1/M2; all jobs released at integer origin 0; positive integer durations.",
+            "Non-preemptive half-open intervals [start,end); only job precedence, machine outages, and hard job completion deadlines.",
+            "No setup, transport, material, operator, alternate-machine, started/frozen-operation constraints.",
+            "For every machine-order combination, acyclic precedence graph earliest placement dominates later placement for makespan and deadlines.",
+            "All machine-order combinations exhausted within budget proves global optimality or infeasibility; incomplete search returns UNKNOWN."
+          ],
+          "maxSequences": 10000,
+          "timeoutMs": 0,
+          "termination": "timeout",
+          "lowerBoundBasis": "Per-machine workload with unioned outage calendar (preemption relaxation), and job-chain duration",
+          "elapsedMs": 0.012
+        },
+        "issues": [
+          "Search incomplete; any incumbent is feasible but optimality has not been certified"
+        ]
+      },
+      "verification": {
+        "status": "NOT_RUN",
+        "reason": "No incumbent"
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "actualBrowser": "installed Google Chrome via Playwright",
+  "flows": [
+    "baseline",
+    "proposed outage without execution",
+    "loading (controlled network delay)",
+    "confirmed outage 7 to 9",
+    "separate plan review",
+    "repeated receipt idempotence",
+    "calendar stale/historical receipt",
+    "explicit J4 deadline 8",
+    "rejected missing deadline preserves base",
+    "UNKNOWN feasible incumbent",
+    "INFEASIBLE horizon",
+    "keyboard SVG and operation ledger",
+    "malformed archive rejection display (controlled fixture, not actual inference)"
+  ],
+  "sameMinuteScale": true,
+  "mobileViewport": 390,
+  "viewportShrinking": false,
+  "liveModelCalled": false,
+  "productionWrite": false
+}

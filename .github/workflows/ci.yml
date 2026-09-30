@@ -9,3 +9,4 @@ jobs:
         with:
           node-version: 20
       - run: npm test
+      - run: python3 -m unittest discover -s test -p 'test_model_client.py' -v

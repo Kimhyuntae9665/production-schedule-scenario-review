@@ -8,9 +8,9 @@ export function ruleProposal(scenario,text){
  if(/supplier|ignore restrictions|execute python|\bSQL\b|\bMIP code\b|set .*speed/i.test(text))unsupported.push('Untrusted supplier/code/control instructions are unsupported.');
  if(/don['’]t move|frozen|already[- ]started|without stopping/i.test(text))unsupported.push('Started/frozen job replanning is unsupported.');
  if(/lateness|tardiness|throughput|color|colour|blue orders|red orders/i.test(text))unsupported.push('Only makespan and the allowlisted constraints are supported.');
- const outage=/(?:Make\s+)?(\w+)\s+unavailable\s+from\s+(minute|second)\s+(\d+(?:\.\d+)?)\s+to\s+(?:minute|second)\s+(\d+(?:\.\d+)?)/i.exec(text);
+ const outage=/(?:Make\s+)?(\w+)\s+unavailable\s+from\s+(minute|second)\s+(\d+(?:\.\d+)?)\s+to\s+(minute|second)\s+(\d+(?:\.\d+)?)/i.exec(text);
  if(outage){
-  const [phrase,machine,unit,startRaw,endRaw]=outage;const start=Number(startRaw)/(unit.toLowerCase()==='second'?60:1),end=Number(endRaw)/(unit.toLowerCase()==='second'?60:1);
+  const [phrase,machine,unit,startRaw,endUnit,endRaw]=outage;const start=Number(startRaw)/(unit.toLowerCase()==='second'?60:1),end=Number(endRaw)/(endUnit.toLowerCase()==='second'?60:1);
   if(!scenario.machines.includes(machine))unsupported.push('Unknown machine alias; no automatic mapping.');
   else if(!Number.isInteger(start)||!Number.isInteger(end)){p.issues.push('Integer-minute grid cannot represent these seconds exactly.');}
   else if(start<0||end<=start||end>30)p.issues.push('Outage requires 0 <= start < end <= 30 minutes.');
@@ -56,6 +56,6 @@ export function applyConfirmed(scenario,p){
  return result;
 }
 export function receipt(scenario,p,plan,verification,previousHash=null){
- const body={schemaVersion:1,sourceFingerprint:fingerprint(scenario),proposal:structuredClone(p),solverStatus:plan.status,verifierStatus:verification.status,makespan:plan.makespan??null,searchProof:plan.proof,previousHash,humanConfirmation:true,localReviewOnly:true};
+ const body={schemaVersion:1,sourceFingerprint:p.sourceFingerprint,confirmedScenarioFingerprint:fingerprint(scenario),planFingerprint:fingerprint({scenario,plan,verification}),proposal:structuredClone(p),solverStatus:plan.status,verifierStatus:verification.status,makespan:plan.makespan??null,searchProof:plan.proof,previousHash,humanConfirmation:true,humanPlanReview:true,localReviewOnly:true};
  return {...body,hash:createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex')};
 }
