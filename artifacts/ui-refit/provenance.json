@@ -1,0 +1,157 @@
+{
+  "purpose": "Presentation-only UI refit; no new inference",
+  "modelCalls": 0,
+  "gpuCalls": 0,
+  "frozenEvaluationSources": {
+    "fixture.mjs": {
+      "expected": "6c69f7f472b694884904147318540b345482d5820f5c318a2ac47a57f76f459b",
+      "actual": "6c69f7f472b694884904147318540b345482d5820f5c318a2ac47a57f76f459b",
+      "unchanged": true
+    },
+    "interpretation.mjs": {
+      "expected": "b519c05b9a57a938bc01fb5609e7203ac24552983de4135001ae7b6f5c3ea6df",
+      "actual": "b519c05b9a57a938bc01fb5609e7203ac24552983de4135001ae7b6f5c3ea6df",
+      "unchanged": true
+    },
+    "interpretation-cases.json": {
+      "expected": "b5a28cbede3058145d837420bd8ff1cf7a2d02579faf6842f82e47495de1ec84",
+      "actual": "b5a28cbede3058145d837420bd8ff1cf7a2d02579faf6842f82e47495de1ec84",
+      "unchanged": true
+    },
+    "gold.json": {
+      "expected": "9225c6c787affed6c4e80ae449961c59c75e54c1e627d8f9eaf5334b875da807",
+      "actual": "9225c6c787affed6c4e80ae449961c59c75e54c1e627d8f9eaf5334b875da807",
+      "unchanged": true
+    },
+    "model_client.py": {
+      "expected": "af8478dd95ce55093ee87e2e788ce839126b09c43d1e4cde14457d0ef76f7418",
+      "actual": "af8478dd95ce55093ee87e2e788ce839126b09c43d1e4cde14457d0ef76f7418",
+      "unchanged": true
+    },
+    "evaluate.mjs": {
+      "expected": "f80788d0a7e82a40ab3cf106c518d65259ff4fbfafe951064c9a46b56354dd98",
+      "actual": "f80788d0a7e82a40ab3cf106c518d65259ff4fbfafe951064c9a46b56354dd98",
+      "unchanged": true
+    }
+  },
+  "protectedOriginalFilesUnchanged": {
+    "artifacts/baseline-executions.json": true,
+    "artifacts/model-attempts/E1.json": true,
+    "artifacts/model-attempts/E10.json": true,
+    "artifacts/model-attempts/E11.json": true,
+    "artifacts/model-attempts/E12.json": true,
+    "artifacts/model-attempts/E2.json": true,
+    "artifacts/model-attempts/E3.json": true,
+    "artifacts/model-attempts/E4.json": true,
+    "artifacts/model-attempts/E5.json": true,
+    "artifacts/model-attempts/E6.json": true,
+    "artifacts/model-attempts/E7.json": true,
+    "artifacts/model-attempts/E8.json": true,
+    "artifacts/model-attempts/E9.json": true,
+    "artifacts/model-browser-attempts.json": true,
+    "artifacts/model-browser-checks.json": true,
+    "artifacts/model-evaluation.json": true,
+    "artifacts/model-input.json": true,
+    "artifacts/model-runtime-completion.json": true,
+    "artifacts/planner-executions.json": true,
+    "artifacts/runtime-provenance.json": true,
+    "artifacts/source-snapshot.json": true,
+    "chart-layout.mjs": true,
+    "evaluate.mjs": true,
+    "fixture.mjs": true,
+    "gold.json": true,
+    "interpretation-cases.json": true,
+    "interpretation.mjs": true,
+    "model_client.py": true,
+    "package.json": true,
+    "planner.mjs": true,
+    "server.mjs": true,
+    "verifier.mjs": true
+  },
+  "assets": [
+    {
+      "path": "artifacts/ui-refit/01-base.png",
+      "bytes": 228397,
+      "sha256": "862cce51a6b7d9cd46e45c98bd2beda29ebf63d56ffcae410c3a04804f23edb3",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/02-source-ledger.png",
+      "bytes": 243381,
+      "sha256": "43e71bfbf0606c8b0ee5ba7e285377ca501290e7dc69be73f9a310314de7552b",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/03-outage-7-to-9.png",
+      "bytes": 290904,
+      "sha256": "b17f6f949da538ae64e242f56d36b7a9f05effc23bb04bbffb996f946eb035fc",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/04-review-history.png",
+      "bytes": 316942,
+      "sha256": "a996f4291f188f407db59ece0ff1ca71f4ef71452a672295151c0d2c086fb068",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/05-unconfirmed-previous-plan.png",
+      "bytes": 347238,
+      "sha256": "5790c8c1d778c0928a5cb1cd710887b642c76f224ee33fceca3741eb11cfcfb6",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/06-deadline-c-8.png",
+      "bytes": 347522,
+      "sha256": "b28fb009a796c818e2001eb1ff14a171f88c9cde5e70278ecef3d41224fc1818",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/07-archive-rejected.png",
+      "bytes": 403630,
+      "sha256": "7e2c388a772fa875de533f20c4ee75001fb1b804da0b1c1123af7300409ae6f2",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/08-unknown-incumbent.png",
+      "bytes": 294292,
+      "sha256": "23d1643c1e77978c7a39cb40493b1406866183c0ace93ee6488323554f853347",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/09-stale-source.png",
+      "bytes": 273213,
+      "sha256": "d7d5a35ae5b34706fdfa32fbea3f676f9eeb0e78f983ba25edcb1632ad3b84af",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/10-mobile-390.png",
+      "bytes": 271226,
+      "sha256": "931a2955f02e773a236d8b342557345d6c1e71e1e63072b92101ffc972bba91c",
+      "source": "actual browser capture"
+    },
+    {
+      "path": "artifacts/ui-refit/browser-checks.json",
+      "bytes": 2346,
+      "sha256": "caf15e1617aa99ffbe48e06a41127cf9f78ef3d7d065c81edd68c860afc06fa5",
+      "source": "actual local browser assertions"
+    },
+    {
+      "path": "artifacts/ui-refit/scenario-review-current.mp4",
+      "bytes": 2351227,
+      "sha256": "78cbc2c7041736dc57dae247db8cc273fddec54811003039ebd603fab5d65d6c",
+      "source": "actual browser capture"
+    }
+  ],
+  "video": {
+    "durationSeconds": 22.0,
+    "width": 1440,
+    "height": 1100,
+    "codec": "h264",
+    "capture": "Actual automated desktop Chrome UI actions; separate mobile screenshot; no generated logs or narration"
+  },
+  "uiFiles": {
+    "index.html": "9674a3c7c8b9a0e7ca68bff45f6c9287d23f80572822f4e9f90ad2a877c7a59a",
+    "app.mjs": "1958a476644c1e295776699bd0abe90af10b11d0fc3949a0b483d3717ebf33fd",
+    "style.css": "c45b71d9b94c30722aaa067d78699193e9734620f95475c7981d6c45f8ff19e7"
+  }
+}

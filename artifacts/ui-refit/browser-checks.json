@@ -1,0 +1,93 @@
+{
+  "browser": "actual installed Google Chrome via Playwright",
+  "modelCalls": 0,
+  "gpuCalls": 0,
+  "cpuTests": {
+    "node": 35,
+    "python": 6
+  },
+  "features": [
+    {
+      "frame": "01-base.png",
+      "baselineMakespan": 7,
+      "noChangedPlanBeforeConfirmation": true
+    },
+    {
+      "frame": "02-source-ledger.png",
+      "exactSource": true,
+      "ledgerVisible": true,
+      "keyboardFocus": true
+    },
+    {
+      "frame": "03-outage-7-to-9.png",
+      "baselineMakespan": 7,
+      "changedMakespan": 9,
+      "sharedAxes": [
+        "0 0 560 260",
+        "0 0 560 260"
+      ],
+      "nativeProofMatchesState": true
+    },
+    {
+      "frame": "04-review-history.png",
+      "separateHumanReviewAction": true,
+      "repeatedReviewSingleReceipt": true
+    },
+    {
+      "frame": "05-unconfirmed-previous-plan.png",
+      "previousPlanSourceRetained": true,
+      "currentProposalUnconfirmed": true,
+      "receiptHistorical": true
+    },
+    {
+      "frame": "06-deadline-c-8.png",
+      "makespan": 8,
+      "hardDeadline": 4
+    },
+    {
+      "frame": "07-archive-rejected.png",
+      "frozenArchiveOnly": true,
+      "confirmationDisabled": true,
+      "rawOriginalProposalVisible": true
+    },
+    {
+      "frame": "08-unknown-incumbent.png",
+      "solver": "UNKNOWN",
+      "independentVerifier": "VALID",
+      "optimumClaim": false
+    },
+    {
+      "frame": "09-stale-source.png",
+      "staleInspectionResponse": 409,
+      "calendarInvalidatesProposal": true
+    },
+    {
+      "frame": "10-mobile-390.png",
+      "viewportWidth": 390,
+      "documentWidth": 390,
+      "fonts": {
+        "minimum": 14,
+        "title": "28px",
+        "titleWidth": 358,
+        "titleScrollWidth": 358
+      },
+      "nativeChartScroll": true
+    }
+  ],
+  "deadline30NativeAxes": [
+    {
+      "viewBox": "0 0 1206 260",
+      "width": 1206
+    },
+    {
+      "viewBox": "0 0 1206 260",
+      "width": 1206
+    }
+  ],
+  "delayedActualResponseBusyGuard": true,
+  "browserErrors": [],
+  "video": {
+    "path": "artifacts/ui-refit/scenario-review-current.mp4",
+    "description": "Actual automated browser flow: base, source ledger, outage, local review, previous plan, deadline, archive rejection, UNKNOWN, stale source and deadline-30 native scrolling. Mobile is a separate screenshot; no narration or new inference."
+  }
+}

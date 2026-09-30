@@ -1,19 +1,62 @@
-# Production schedule scenario review
-
 <img src="docs/architecture.png" alt="Form and optional Qwen proposals go through human confirmation, a deterministic planner, an independent verifier, a Gantt comparison and a local review receipt." width="390">
+
+# Production schedule scenario review
 
 [![CPU verification](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml/badge.svg)](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml)
 
 [Editable architecture SVG](docs/architecture.svg) · [Asset provenance](docs/asset-provenance.md)
 
-A small production-planning review desk for a **fictional two-machine cell**. A bounded language proposal or manual form prepares a typed change. A person confirms its meaning and half-open minute convention; an actually executed exact planner then produces a schedule. An independently implemented verifier checks the operations. A separate human action records review of the exact proposal and exact plan.
+A review desk for a **fictional two-machine cell**. A manual form or bounded language proposal prepares a typed change. Human confirmation binds the proposal and source before the deterministic planner runs. An independent verifier checks the actual schedule; a separate action records review of that exact plan. This UI refit changes presentation only. The original scheduling, model archives, evaluation claims and security boundaries remain intact.
 
-The interface uses compact controls, a proposed-change diff, two Gantts on the **same relative-minute scale**, explicit downtime bands, numeric deltas, solver proof state, independent checks and a review history. Original operations are accessible in a keyboard-focusable SVG and an operation ledger. The form works without any model service.
+## Current UI: actual feature screens
 
-![Actual browser: confirmed outage extends makespan from 7 to 9 minutes](artifacts/media/readable-outage-reviewed.png)
+원문 근거와 계산 결과는 같은 너비의 흰색 패널로 비교합니다. 두 Gantt는 원점·분 눈금·중단·마감이 같은 축을 사용하며, 정확한 작업 원장과 원본 데이터는 스크롤로 확인할 수 있습니다. 아래 10개는 새 실제 브라우저 화면입니다.
 
-[Original CPU-only browser demonstration MP4](artifacts/media/scenario-review.mp4) · [Current 390px UNKNOWN screenshot](artifacts/media/readable-unknown-390.png) · [Browser checks](artifacts/browser-checks.json)
+![기준 계획 7분과 변경 입력](artifacts/ui-refit/01-base.png)
 
+기준 7분 계획을 표시하고 확인 전 변경 계획은 계산하지 않습니다.
+
+![정확한 원문과 열린 작업 원장](artifacts/ui-refit/02-source-ledger.png)
+
+변경 제안의 원문·구절·출처 지문과 정확한 시작/종료 원장을 확인합니다.
+
+![M1 중단으로 7분에서 9분으로 변경](artifacts/ui-refit/03-outage-7-to-9.png)
+
+M1 중단 [2,4) 후 7→9분 결과를 같은 Gantt 축에서 비교합니다.
+
+![별도 사람 검토와 로컬 영수증 이력](artifacts/ui-refit/04-review-history.png)
+
+계산·독립 검증과 별도로 사람 검토를 기록합니다. 같은 계획의 반복 검토는 영수증을 늘리지 않습니다.
+
+![새 제안은 미확인이고 이전 계획의 원문과 영수증은 유지](artifacts/ui-refit/05-unconfirmed-previous-plan.png)
+
+새 J4 제안을 준비해도 이전 9분 계획·원문은 보존되며 영수증은 과거 상태로 표시됩니다.
+
+![J4 마감 4분을 포함한 C 시나리오의 8분 계획](artifacts/ui-refit/06-deadline-c-8.png)
+
+명시된 J4 마감 4분을 만족하는 C 시나리오의 전체 완료시간은 8분입니다.
+
+![고정된 Qwen 기록 제안 거절과 원본 데이터](artifacts/ui-refit/07-archive-rejected.png)
+
+원본 Qwen E1 기록은 ARCHIVE_REJECTED입니다. 원본 제안을 표시하고 확인은 비활성화합니다.
+
+![불완전 탐색 UNKNOWN과 독립 검증 VALID](artifacts/ui-refit/08-unknown-incumbent.png)
+
+1개 순서 탐색의 UNKNOWN과 실행 가능 incumbent의 VALID 검증을 구분합니다. 최적성은 주장하지 않습니다.
+
+![원본 달력 변경으로 STALE이 된 제안](artifacts/ui-refit/09-stale-source.png)
+
+달력 변경은 기존 해석을 STALE로 만들고 확인을 막습니다. 오래된 클라이언트의 확인도 409로 거절됩니다.
+
+![390px 모바일의 실제 UNKNOWN 계획과 가로 스크롤](artifacts/ui-refit/10-mobile-390.png)
+
+390px에서 제목은 한 줄, 의미 있는 글자는 최소 14px이며 Gantt는 축을 축소하지 않고 가로 스크롤합니다.
+
+[Current actual browser video](artifacts/ui-refit/scenario-review-current.mp4) · [Browser checks](artifacts/ui-refit/browser-checks.json) · [Exact asset SHA256 / bytes and preserved-source checks](artifacts/ui-refit/provenance.json)
+
+The new video records the actual automated desktop browser flow above, including a deadline-30 scrolling check. Mobile is a separate screenshot, not footage in this video. There is no narration, generated solver log, new model invocation or GPU inference. Node's 35 tests and Python's 6 original CPU tests passed locally; browser checks run locally with installed Chrome, separately from CI.
+
+All images/videos under `artifacts/media/` and their old publication/readability reports are **historical evidence from the prior UI**, retained unchanged. [Historical CPU video](artifacts/media/scenario-review.mp4) and [historical model replay video](artifacts/media/recorded-model-review.mp4) describe that prior presentation.
 ## Run locally
 
 Node 18 or later; no npm packages, solver installation, vector database or calendar widget is required.
@@ -77,7 +120,7 @@ Zero unsafe admissions here results from **rejecting every model proposal**, inc
 
 Provider-reported totals were 7,019 prompt tokens and 3,864 output tokens; the largest individual counts were 602/545. Client-measured per-request elapsed time was 2.81–8.54 seconds, including local transport/loading. These are local inference observations, not factory performance or a configured timeout presented as a measurement. [Runtime metadata](artifacts/runtime-provenance.json) reports Ollama 0.17.7 and the installed Qwen3 4.0B Q4_K_M digest observed after the run; archived requests identify the model tag, not per-request immutable weight attestation.
 
-![Actual browser replay of a rejected frozen Qwen proposal](artifacts/media/model-E1-rejected.png)
+![Historical prior UI: actual browser replay of a rejected frozen Qwen proposal](artifacts/media/model-E1-rejected.png)
 
 [Recorded-output review MP4](artifacts/media/recorded-model-review.mp4) · [Model browser checks](artifacts/model-browser-checks.json) · [Model rejection at 390px](artifacts/media/model-mobile-390.png). This is an actual browser replay of the frozen model outputs, with **0 model calls during recording**. The script checks rejected E1/E3/E10/E6, keeps confirmation disabled, preserves original source text, and then demonstrates an explicit manual fallback producing 9 minutes with a VALID verifier. The automated demo creates no human approval or model review receipt. Earlier screenshots and the CPU-only demonstration remain unchanged.
 
