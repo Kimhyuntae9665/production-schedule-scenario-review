@@ -1,16 +1,52 @@
 <img src="docs/architecture.png" alt="Form and optional Qwen proposals go through human confirmation, a deterministic planner, an independent verifier, a Gantt comparison and a local review receipt." width="390">
 
-# Production schedule scenario review
+# Production schedule CPU calculation and scenario review
 
 [![CPU verification](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml/badge.svg)](https://github.com/Kimhyuntae9665/production-schedule-scenario-review/actions/workflows/ci.yml)
 
 [Editable architecture SVG](docs/architecture.svg) · [Asset provenance](docs/asset-provenance.md)
 
-A review desk for a **fictional two-machine cell**. A manual form or bounded language proposal prepares a typed change. Human confirmation binds the proposal and source before the deterministic planner runs. An independent verifier checks the actual schedule; a separate action records review of that exact plan. This UI refit changes presentation only. The original scheduling, model archives, evaluation claims and security boundaries remain intact.
+A local **CPU scheduling utility for a bounded two-machine cell**. Import your own baseline JSON, inspect its source hash and revision, then prepare an explicit change. Human confirmation binds the proposal and source before the deterministic planner calculates the changed schedule. An independent verifier checks the actual intervals; a separate action records review of that exact plan. This is a what-if calculation tool, with no autonomous AI scheduling or factory control.
 
-## Current UI: actual feature screens
+**The optional Qwen archive produced 0/12 usable proposals and is a failed experiment, not the working scheduling engine.** No new model evaluation has been run. User input stays in the local Node process on CPU and is never sent to a model. Original gold, evaluation cases, model attempts and model evaluation remain unchanged.
 
-원문 근거와 계산 결과는 같은 너비의 흰색 패널로 비교합니다. 두 Gantt는 원점·분 눈금·중단·마감이 같은 축을 사용하며, 정확한 작업 원장과 원본 데이터는 스크롤로 확인할 수 있습니다. 아래 10개는 새 실제 브라우저 화면입니다.
+## Use your own baseline
+
+Paste JSON into **사용자 기준 일정 JSON**, then choose **기준 일정 적용·계산**. The initial textarea contains the current source and can be edited. **현재 원본 JSON 불러오기** replaces the editor contents with the current applied source. Import replaces the active baseline, clears its proposal and changed plan, and keeps earlier review receipts and events as historical records. **가상 예제 복원** restores synthetic A and also preserves history. State lives in memory until server restart; the source hash is a consistency guard, not durable storage or authentication.
+
+The baseline schema accepts exactly M1/M2, origin 0, minute units, makespan objective, release 0, unique job IDs and globally unique operation IDs. Each job is a nonempty ordered operation chain. Limits are 12 total operations, 12 jobs, 32 outages, integer durations 1–1440 minutes, and integer outage endpoints/deadlines 0–1440 minutes. Unknown fields are rejected. IDs start with an ASCII letter and contain at most 40 letters, digits, underscores or hyphens. Revision is a nonnegative safe integer or a nonempty string of up to 40 characters; import stores the supplied revision separately and assigns a new server-owned source revision. Request bodies are at most 16,000 bytes, depth 8 and 1,000 values. Invalid input is rejected before calculation and leaves the existing source intact.
+
+For example, this baseline uses different IDs, two jobs and a three-operation chain, rather than the original A/B/C fixtures:
+
+```json
+{
+  "id": "LOCAL_CELL", "revision": "customer-v2",
+  "origin": 0, "unit": "minute", "objective": "makespan",
+  "machines": ["M1", "M2"],
+  "jobs": [
+    {"id": "ORDER_A", "release": 0, "deadline": 20, "operations": [
+      {"id": "CUT_A", "machine": "M1", "duration": 3},
+      {"id": "CHECK_A", "machine": "M2", "duration": 2},
+      {"id": "FINISH_A", "machine": "M1", "duration": 1}
+    ]},
+    {"id": "ORDER_B", "release": 0, "operations": [
+      {"id": "CHECK_B", "machine": "M2", "duration": 2},
+      {"id": "CUT_B", "machine": "M1", "duration": 4}
+    ]}
+  ],
+  "outages": [{"machine": "M2", "start": 4, "end": 5}]
+}
+```
+
+CPU regression tests calculate **OPTIMAL / VALID, 8 minutes** for this input. After confirmed M1 downtime [2,4), the result is **OPTIMAL / VALID, 12 minutes**. These are deterministic calculation results on a new supported shape; they do not measure model accuracy or real factory performance. Larger search spaces may return UNKNOWN within the unchanged 10,000-order / 1-second budget. An imported impossible deadline returns INFEASIBLE / NOT_RUN; a feasible verifier label is never invented when there is no schedule.
+
+The explicit job-change form now accepts your own new job and two operation IDs. The supported English grammar is `Add EXTRA: FIRST on M2 for 2 minutes, then LAST on M1 for 1 minute; complete EXTRA by minute 15.` Both steps and an explicit matching completion deadline are required. Change-form durations remain 1–10 minutes, outage and change deadline limits remain 30 minutes. Other baseline shapes can be imported directly; unsupported language still requires clarification. Duplicate IDs or exceeding the total operation limit cannot become READY. Separate [CPU input/grammar regressions](test/user-baseline.test.mjs) cover new shapes, exact spans, duplicate IDs, unsupported residue, invalid/deep/large input and stale two-client requests; the frozen model cases are untouched.
+
+For the local API, read `/api/state`, then POST `/api/import` with `{"sourceFingerprint":"<current SHA256>","baseline":{...}}`. Propose, calendar-change and reset actions also require that current source fingerprint. Import or reset increments the source revision even for identical input bytes, so stale propose/import/confirm/review requests return 409. Confirmation additionally binds proposal ID/hash; review also binds the exact plan fingerprint. A historical receipt retains its original hash and is explicitly incompatible after source changes. There is no file upload, database write, model request or factory connection.
+
+## Historical UI screenshots (before user import)
+
+아래 10개는 이전 UI의 실제 브라우저 화면을 보존한 자료입니다. 새 사용자 JSON 입력 화면을 증명하는 자료는 아닙니다. 두 Gantt와 정확한 작업 원장의 기존 계산 흐름을 보여 줍니다.
 
 ![기준 계획 7분과 변경 입력](artifacts/ui-refit/01-base.png)
 
@@ -52,9 +88,9 @@ M1 중단 [2,4) 후 7→9분 결과를 같은 Gantt 축에서 비교합니다.
 
 390px에서 제목은 한 줄, 의미 있는 글자는 최소 14px이며 Gantt는 축을 축소하지 않고 가로 스크롤합니다.
 
-[Current actual browser video](artifacts/ui-refit/scenario-review-current.mp4) · [Browser checks](artifacts/ui-refit/browser-checks.json) · [Exact asset SHA256 / bytes and preserved-source checks](artifacts/ui-refit/provenance.json)
+[Historical UI refit browser video](artifacts/ui-refit/scenario-review-current.mp4) · [Historical browser checks](artifacts/ui-refit/browser-checks.json) · [Historical asset SHA256 / bytes and preserved-source checks](artifacts/ui-refit/provenance.json)
 
-The new video records the actual automated desktop browser flow above, including a deadline-30 scrolling check. Mobile is a separate screenshot, not footage in this video. There is no narration, generated solver log, new model invocation or GPU inference. Node's 35 tests and Python's 6 original CPU tests passed locally; browser checks run locally with installed Chrome, separately from CI.
+That historical video records the automated desktop browser flow above, including a deadline-30 scrolling check. Mobile is a separate screenshot, not footage in that video. There is no narration, generated solver log, new model invocation or GPU inference. The prior implementation's 35 Node tests and 6 Python CPU tests passed at capture time; those saved checks do not certify this later import feature.
 
 All images/videos under `artifacts/media/` and their old publication/readability reports are **historical evidence from the prior UI**, retained unchanged. [Historical CPU video](artifacts/media/scenario-review.mp4) and [historical model replay video](artifacts/media/recorded-model-review.mp4) describe that prior presentation.
 ## Run locally
@@ -89,7 +125,7 @@ All releases are 0, the origin is 0, units are integer minutes, machines M1/M2 a
 
 ## Interpretation and decision boundaries
 
-Only typed `add_outage` and explicit `add_job` J4 changes are allowed. Each carries exact phrase spans, IDs, unit/origin and the source scenario fingerprint. The bounded rule parser is intentionally a small grammar, not general natural-language understanding. It rechecks model proposals against exact explicit facts in that grammar. Unsupported residue cannot silently disappear.
+Only typed `add_outage` and explicit two-operation `add_job` changes are allowed. Job and operation IDs are user-supplied; the original J4 form remains a preset. Each carries exact phrase spans, IDs, unit/origin and the source scenario fingerprint. The bounded rule parser is intentionally a small grammar, not general natural-language understanding. It rechecks model proposals against exact explicit facts in that grammar. Unsupported residue cannot silently disappear.
 
 - “Urgent” alone has no deadline. Missing duration/deadline requires clarification.
 - Unknown machine aliases, ambiguous “don't move J2”, color-order clauses, lateness objectives, supplier instructions, generated code and started/frozen jobs cannot be confirmed.
@@ -128,7 +164,7 @@ Provider-reported totals were 7,019 prompt tokens and 3,864 output tokens; the l
 
 ## Verification and scope
 
-`npm test` currently passes **35 Node tests**. On Linux, `python3 -m unittest discover -s test -p 'test_model_client.py' -v` passes **6 CPU lease/timeout tests**. Browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport with no viewport shrinking. The architecture was inspected at both 360px and 390px; actual published GitHub loading also passed at 360px, 390px and desktop ([checks](artifacts/published-checks.json)).
+`npm test` covers **39 Node tests**, including the separate user-input regressions above. The original Linux command `python3 -m unittest discover -s test -p 'test_model_client.py' -v` covered 6 CPU lease/timeout tests in the archived run. Historical browser checks cover proposal-before-planning, controlled delayed loading, 7→9 outage, explicit deadline 8, repeated receipts, stale calendars, rejection preserving baseline, UNKNOWN feasible incumbents, INFEASIBLE horizon, keyboard navigation and a 390px viewport. Historical published checks and architecture inspection apply to their saved revisions ([checks](artifacts/published-checks.json)), not the later import feature.
 
 [CPU UI regressions](artifacts/ui-boundary-fixed.json) separately reproduce and verify previous-plan binding and a deadline at minute 30. Both Gantts include deadlines in the same shared horizon, preserve at least 38 pixels per minute, and scroll horizontally alongside the exact interval ledger. Current 390px browser checks measure meaningful text at least 14px; checked axis, metric and operation-label colors exceed the [4.5:1 normal-text contrast target](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html). This is a focused readability check, not a complete accessibility audit. [Before evidence](artifacts/ui-boundary-before.json), [previous-plan repair](artifacts/media/plan-binding-fixed.png), and [deadline marker repair](artifacts/media/deadline-axis-fixed.png) remain available.
 

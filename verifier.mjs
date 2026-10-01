@@ -7,8 +7,14 @@ export function verify(scenario, schedule, { reportedMakespan, horizon } = {}) {
   const fields = (value, allowed, label) => { for (const key of Object.keys(value)) if (!allowed.includes(key)) issues.push(`${label}: unsupported field ${key}`); };
   const invalid = () => ({ status: 'INVALID', issues, checkedOperations: 0 });
   if (!object(scenario)) { issues.push('Scenario is not an object'); return invalid(); }
+  if (!Array.isArray(scenario.jobs) || scenario.jobs.length > 12 || !Array.isArray(scenario.outages) || scenario.outages.length > 32) { issues.push('Bounded input requires at most 12 jobs and 32 outages'); return invalid(); }
+  let count = 0;
+  for (const job of scenario.jobs) {
+    if (Array.isArray(job?.operations)) count += job.operations.length;
+    if (count > 12) { issues.push('More than 12 operations exceeds this slice'); return invalid(); }
+  }
   fields(scenario, ['id', 'revision', 'origin', 'unit', 'machines', 'jobs', 'outages', 'objective'], 'Scenario');
-  if (!id(scenario.id) || !['string', 'number'].includes(typeof scenario.revision) || String(scenario.revision).length === 0) issues.push('Invalid scenario identity/revision');
+  if (!id(scenario.id) || !(typeof scenario.revision === 'string' && scenario.revision.length > 0 && scenario.revision.length <= 40 || Number.isSafeInteger(scenario.revision) && scenario.revision >= 0)) issues.push('Invalid scenario identity/revision');
   if (scenario.origin !== 0 || scenario.unit !== 'minute') issues.push('Expected integer minute units at origin 0');
   if (scenario.objective !== 'makespan') issues.push('Unsupported objective');
   if (!Array.isArray(scenario.machines) || scenario.machines.length !== 2 || new Set(scenario.machines).size !== 2 || !scenario.machines.includes('M1') || !scenario.machines.includes('M2')) issues.push('Expected unique M1/M2 machines');
@@ -21,14 +27,14 @@ export function verify(scenario, schedule, { reportedMakespan, horizon } = {}) {
     if (!id(job.id) || jobIds.has(job.id)) issues.push('Invalid/duplicate job ID');
     jobIds.add(job.id);
     if (job.release !== 0) issues.push(`${job.id}: release must be 0`);
-    if (job.deadline !== undefined && !integer(job.deadline)) issues.push(`${job.id}: invalid deadline`);
+    if (job.deadline !== undefined && (!integer(job.deadline) || job.deadline > 1440)) issues.push(`${job.id}: invalid deadline (0..1440)`);
     if (!Array.isArray(job.operations) || !job.operations.length) issues.push(`${job.id}: missing operations`);
     for (const op of Array.isArray(job.operations) ? job.operations : []) {
       if (!object(op)) { issues.push('Malformed operation'); continue; }
       fields(op, ['id', 'machine', 'duration'], 'Operation');
       if (!id(op.id) || required.has(op.id)) issues.push('Invalid/duplicate required operation ID');
       if (!['M1', 'M2'].includes(op.machine)) issues.push(`${op.id}: unknown machine`);
-      if (!integer(op.duration) || op.duration === 0) issues.push(`${op.id}: invalid duration`);
+      if (!integer(op.duration) || op.duration === 0 || op.duration > 1440) issues.push(`${op.id}: invalid duration (1..1440)`);
       required.set(op.id, { ...op, jobId: job.id });
     }
   }
@@ -36,7 +42,7 @@ export function verify(scenario, schedule, { reportedMakespan, horizon } = {}) {
   for (const o of Array.isArray(scenario.outages) ? scenario.outages : []) {
     if (!object(o)) { issues.push('Malformed outage'); continue; }
     fields(o, ['machine', 'start', 'end'], 'Outage');
-    if (!['M1', 'M2'].includes(o.machine) || !integer(o.start) || !integer(o.end) || o.start >= o.end) issues.push('Invalid outage');
+    if (!['M1', 'M2'].includes(o.machine) || !integer(o.start) || !integer(o.end) || o.start >= o.end || o.end > 1440) issues.push('Invalid outage (0 <= start < end <= 1440)');
   }
   if (!issues.length) {
     const duration = [...required.values()].reduce((sum, op) => sum + op.duration, 0);

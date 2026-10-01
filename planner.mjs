@@ -10,13 +10,19 @@ const ASSUMPTIONS = Object.freeze([
 const integer = value => Number.isSafeInteger(value) && value >= 0;
 const identifier = value => typeof value === 'string' && /^[A-Za-z][A-Za-z0-9_-]{0,39}$/.test(value);
 
-function validate(input) {
+export function validateScenario(input) {
   const issues = [];
   const object = value => value && typeof value === 'object' && !Array.isArray(value);
   const keys = (value, allowed, label) => { for (const key of Object.keys(value)) if (!allowed.includes(key)) issues.push(`${label}: unsupported field ${key}`); };
   if (!object(input)) return ['Scenario must be an object'];
+  if (!Array.isArray(input.jobs) || input.jobs.length > 12 || !Array.isArray(input.outages) || input.outages.length > 32) return ['Bounded input requires at most 12 jobs and 32 outages'];
+  let count = 0;
+  for (const job of input.jobs) {
+    if (Array.isArray(job?.operations)) count += job.operations.length;
+    if (count > 12) return ['Bounded slice supports at most 12 operations'];
+  }
   keys(input, ['id', 'revision', 'origin', 'unit', 'machines', 'jobs', 'outages', 'objective'], 'Scenario');
-  if (!identifier(input.id) || !['string', 'number'].includes(typeof input.revision) || String(input.revision).length === 0) issues.push('Scenario needs valid id and revision');
+  if (!identifier(input.id) || !(typeof input.revision === 'string' && input.revision.length > 0 && input.revision.length <= 40 || Number.isSafeInteger(input.revision) && input.revision >= 0)) issues.push('Scenario needs valid id and bounded revision');
   if (input.origin !== 0 || input.unit !== 'minute') issues.push('Only origin 0 and integer minute units are supported');
   if (input.objective !== 'makespan') issues.push('Only makespan objective is supported');
   if (!Array.isArray(input.machines) || input.machines.length !== 2 || new Set(input.machines).size !== 2 || !input.machines.includes('M1') || !input.machines.includes('M2')) issues.push('Machines must be exactly M1 and M2');
@@ -28,7 +34,7 @@ function validate(input) {
     if (!identifier(job.id) || jobs.has(job.id)) issues.push('Job IDs must be valid and unique');
     jobs.add(job.id);
     if (job.release !== 0) issues.push(`${job.id}: only release 0 is supported`);
-    if (job.deadline !== undefined && !integer(job.deadline)) issues.push(`${job.id}: deadline must be a nonnegative integer minute`);
+    if (job.deadline !== undefined && (!integer(job.deadline) || job.deadline > 1440)) issues.push(`${job.id}: deadline must be an integer minute in 0..1440`);
     if (!Array.isArray(job.operations) || job.operations.length === 0) issues.push(`${job.id}: operations are required`);
     for (const op of Array.isArray(job.operations) ? job.operations : []) {
       if (!object(op)) { issues.push('Operation must be an object'); continue; }
@@ -36,7 +42,7 @@ function validate(input) {
       if (!identifier(op.id) || operations.has(op.id)) issues.push('Operation IDs must be valid and globally unique');
       operations.add(op.id);
       if (!['M1', 'M2'].includes(op.machine)) issues.push(`${op.id}: unknown machine`);
-      if (!integer(op.duration) || op.duration === 0) issues.push(`${op.id}: positive integer duration is required`);
+      if (!integer(op.duration) || op.duration === 0 || op.duration > 1440) issues.push(`${op.id}: integer duration in 1..1440 is required`);
     }
   }
   if (operations.size > 12) issues.push('Bounded slice supports at most 12 operations');
@@ -44,7 +50,7 @@ function validate(input) {
   for (const outage of Array.isArray(input.outages) ? input.outages : []) {
     if (!object(outage)) { issues.push('Outage must be an object'); continue; }
     keys(outage, ['machine', 'start', 'end'], 'Outage');
-    if (!['M1', 'M2'].includes(outage.machine) || !integer(outage.start) || !integer(outage.end) || outage.end <= outage.start) issues.push('Outage requires known machine and integer 0 <= start < end');
+    if (!['M1', 'M2'].includes(outage.machine) || !integer(outage.start) || !integer(outage.end) || outage.end <= outage.start || outage.end > 1440) issues.push('Outage requires known machine and integer 0 <= start < end <= 1440');
   }
   if (!issues.length) {
     const sum = input.jobs.flatMap(job => job.operations).reduce((n, op) => n + op.duration, 0);
@@ -113,7 +119,7 @@ function earliest(scenario, orders, operations, calendars) {
 
 export function solve(scenario, { maxSequences = 10000, timeoutMs = 1000, horizon } = {}) {
   const started = performance.now();
-  const issues = validate(scenario);
+  const issues = validateScenario(scenario);
   if (!integer(maxSequences) || !Number.isFinite(timeoutMs) || timeoutMs < 0 || (horizon !== undefined && !integer(horizon))) issues.push('Invalid search budget or horizon');
   const proof = { complete: false, enumerated: 0, totalSequences: 0, assumptions: [...ASSUMPTIONS], maxSequences, timeoutMs, termination: 'invalid-input' };
   if (issues.length) return { status: 'INVALID', schedule: [], proof, issues };

@@ -1,5 +1,6 @@
 import {fingerprint} from './fixture.mjs';
 import {createHash} from 'node:crypto';
+import {validateScenario} from './planner.mjs';
 const span=(text,start=0,end=text.length)=>({start,end,text:text.slice(start,end)});
 export function ruleProposal(scenario,text){
  const p={sourceFingerprint:fingerprint(scenario),sourceText:text,unit:'minute',origin:0,changes:[],unsupportedClauses:[],issues:[],status:'CLARIFY',method:'bounded-rule-parser'};
@@ -16,24 +17,29 @@ export function ruleProposal(scenario,text){
   else if(start<0||end<=start||end>30)p.issues.push('Outage requires 0 <= start < end <= 30 minutes.');
   else p.changes.push({type:'add_outage',machine,start,end,unit:'minute',origin:0,phrase:span(text,outage.index,outage.index+phrase.length)});
  }
- const job=/Add\s+(urgent\s+)?J4:\s*J4A\s+on\s+(\w+)\s+for\s+(\d+)\s+minute[s]?,\s*then\s+J4B\s+on\s+(\w+)\s+for\s+(\d+)\s+minute[s]?(?:;\s*complete\s+J4\s+by\s+minute\s+(\d+))?/i.exec(text);
+ const job=/Add\s+(urgent\s+)?([A-Za-z][A-Za-z0-9_-]{0,39}):\s*([A-Za-z][A-Za-z0-9_-]{0,39})\s+on\s+(\w+)\s+for\s+(\d+)\s+minute[s]?,\s*then\s+([A-Za-z][A-Za-z0-9_-]{0,39})\s+on\s+(\w+)\s+for\s+(\d+)\s+minute[s]?(?:;\s*complete\s+([A-Za-z][A-Za-z0-9_-]{0,39})\s+by\s+minute\s+(\d+))?/i.exec(text);
  if(job){
-  const [phrase,,first,d1,second,d2,deadline]=job;
+  const [phrase,,id,op1,first,d1,op2,second,d2,completed,deadline]=job;
   if(!scenario.machines.includes(first)||!scenario.machines.includes(second))unsupported.push('Unknown machine alias; no automatic mapping.');
   else if(!deadline)p.issues.push('Urgent does not define a hard deadline. Specify completion minute.');
+  else if(completed!==id)p.issues.push('Completion deadline must name the added job exactly.');
   else if(Number(d1)<=0||Number(d2)<=0||Number(d1)>10||Number(d2)>10||Number(deadline)<=0||Number(deadline)>30)p.issues.push('Bounded positive integer durations/deadline required.');
-  else p.changes.push({type:'add_job',id:'J4',release:0,operations:[{id:'J4A',machine:first,duration:Number(d1)},{id:'J4B',machine:second,duration:Number(d2)}],deadline:Number(deadline),unit:'minute',origin:0,phrase:span(text,job.index,job.index+phrase.length)});
+  else p.changes.push({type:'add_job',id,release:0,operations:[{id:op1,machine:first,duration:Number(d1)},{id:op2,machine:second,duration:Number(d2)}],deadline:Number(deadline),unit:'minute',origin:0,phrase:span(text,job.index,job.index+phrase.length)});
  }
  // Preserve unsupported residue instead of silently dropping a second clause.
  const covered=[outage,job].filter(Boolean).map(m=>[m.index,m.index+m[0].length]);let residue=text;for(const [a,b]of covered.sort((x,y)=>y[0]-x[0]))residue=residue.slice(0,a)+residue.slice(b);
  if(residue.replace(/[\s.;,]/g,'')&&!unsupported.length)unsupported.push('Unrecognized clause requires clarification or manual input.');
  if(unsupported.length){p.status='UNSUPPORTED';p.unsupportedClauses=[{...span(text),reason:unsupported.join(' ')}];}
- else if(p.issues.length||!p.changes.length)p.status='CLARIFY';else p.status='READY';return p;
+ else if(p.issues.length||!p.changes.length)p.status='CLARIFY';else {
+  const candidate=structuredClone(scenario);
+  for(const c of p.changes)if(c.type==='add_outage')candidate.outages.push({machine:c.machine,start:c.start,end:c.end});else candidate.jobs.push({id:c.id,release:0,operations:c.operations,deadline:c.deadline});
+  p.issues.push(...validateScenario(candidate));p.status=p.issues.length?'CLARIFY':'READY';
+ }return p;
 }
 export function manualProposal(scenario,input){
  let text;
  if(input.type==='add_outage')text=`Make ${input.machine} unavailable from minute ${input.start} to minute ${input.end}.`;
- else if(input.type==='add_job')text=`Add J4: J4A on ${input.machine1} for ${input.duration1} minute, then J4B on ${input.machine2} for ${input.duration2} minute; complete J4 by minute ${input.deadline}.`;
+ else if(input.type==='add_job'){const id=input.id??'J4',op1=input.operation1??'J4A',op2=input.operation2??'J4B';text=`Add ${id}: ${op1} on ${input.machine1} for ${input.duration1} minute, then ${op2} on ${input.machine2} for ${input.duration2} minute; complete ${id} by minute ${input.deadline}.`;}
  else return {...ruleProposal(scenario,''),status:'INVALID',issues:['Allowlisted change type required.']};
  return {...ruleProposal(scenario,text),method:'manual-form',sourceText:text};
 }
@@ -51,7 +57,7 @@ export function validateInterpretation(scenario,p){
 }
 export function applyConfirmed(scenario,p){
  const checked=validateInterpretation(scenario,p);if(!checked.valid)throw Error(checked.status+': '+checked.issues.join(' '));
- const result=structuredClone(scenario);result.id='WHAT-IF';result.revision++;
+ const result=structuredClone(scenario);result.id='WHAT-IF';result.revision=Number.isSafeInteger(Number(scenario.revision)+1)?Number(scenario.revision)+1:String(scenario.revision).slice(0,30)+'-whatif';
  for(const c of p.changes){if(c.type==='add_outage')result.outages.push({machine:c.machine,start:c.start,end:c.end});else if(c.type==='add_job'){if(result.jobs.some(j=>j.id===c.id))throw Error('Duplicate job ID.');result.jobs.push({id:c.id,release:0,operations:c.operations,deadline:c.deadline});}else throw Error('Unknown change type.');}
  return result;
 }

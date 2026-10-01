@@ -1,7 +1,13 @@
 import http from 'node:http';import {readFile} from 'node:fs/promises';import {fileURLToPath} from 'node:url';import {randomUUID} from 'node:crypto';
-import {scenario,fingerprint} from './fixture.mjs';import {solve} from './planner.mjs';import {verify} from './verifier.mjs';import {ruleProposal,manualProposal,validateInterpretation,applyConfirmed,receipt} from './interpretation.mjs';
+import {scenario,fingerprint} from './fixture.mjs';import {solve,validateScenario} from './planner.mjs';import {verify} from './verifier.mjs';import {ruleProposal,manualProposal,validateInterpretation,applyConfirmed,receipt} from './interpretation.mjs';
 const root=fileURLToPath(new URL('.',import.meta.url));
 const check=(data,plan)=>plan.schedule.length?verify(data,plan.schedule,{reportedMakespan:plan.makespan}):{status:'NOT_RUN',issues:['No feasible incumbent to verify.']};
+// Reject nested/oversized transport shapes before hashing, cloning or planning.
+function boundedRequest(input){
+ const queue=[[input,0]];let entries=0;
+ while(queue.length){const [value,depth]=queue.pop();if(depth>8||++entries>1000)return false;if(value&&typeof value==='object'){const values=Object.values(value);if(values.length>1000)return false;for(const child of values)queue.push([child,depth+1]);}}
+ return input!==null&&typeof input==='object'&&!Array.isArray(input);
+}
 export function recordedProposal(entry,base){
  if(!entry?.proposal)return {...ruleProposal(base,''),status:'MODEL_UNAVAILABLE',issues:['No recorded proposal for this case. Manual form remains usable.']};
  const p={...entry.proposal,method:'recorded-qwen3:4b'};
@@ -10,8 +16,10 @@ export function recordedProposal(entry,base){
 }
 export function createDesk(){
  let base=scenario(),baseline=solve(base),baselineVerification=check(base,baseline),proposal=null,changed=null,changedPlan=null,changedVerification=null,history=[],latestReceipt=null,version=0,planFingerprint=null,plannedProposalId=null,plannedBudget=null,plannedProposal=null;
- const receiptCompatibility=()=>({current:!!latestReceipt&&latestReceipt.sourceFingerprint===fingerprint(base)&&latestReceipt.planFingerprint===planFingerprint&&latestReceipt.proposal.id===proposal?.id,proposalId:latestReceipt?.proposal.id??null,reason:!latestReceipt?'No receipt':latestReceipt.sourceFingerprint!==fingerprint(base)?'Historical receipt; source calendar changed. It does not verify the current scenario.':latestReceipt.planFingerprint!==planFingerprint?'Historical receipt; plan fingerprint changed. Review the new result.':latestReceipt.proposal.id!==proposal?.id?'Previous confirmed plan receipt; it belongs to a different proposal than the one currently inspected.':'Compatible with current proposal, source and exact plan'});
- const state=()=>({version,base,baseline,baselineVerification,sourceFingerprint:fingerprint(base),proposal:proposal?{...proposal,validation:validateInterpretation(base,proposal)}:null,changed,changedPlan,changedVerification,planFingerprint,plannedProposalId,plannedProposal,planIsCurrent:!!changedPlan&&plannedProposalId===proposal?.id,history,latestReceipt,receiptCompatibility:receiptCompatibility(),modelState:'No live inference in this desk. Recorded proposals are optional.'});
+ let sourceRevision=1,source={kind:'synthetic-fixture',label:'Synthetic fixture A'};
+ const clearPlan=()=>{changed=null;changedPlan=null;changedVerification=null;planFingerprint=null;plannedProposalId=null;plannedProposal=null;plannedBudget=null;};
+ const receiptCompatibility=()=>({current:!!latestReceipt&&latestReceipt.sourceFingerprint===fingerprint(base)&&latestReceipt.planFingerprint===planFingerprint&&latestReceipt.proposal.id===proposal?.id,proposalId:latestReceipt?.proposal.id??null,reason:!latestReceipt?'No receipt':latestReceipt.sourceFingerprint!==fingerprint(base)?'Historical receipt; source baseline/calendar changed. It does not verify the current scenario.':latestReceipt.planFingerprint!==planFingerprint?'Historical receipt; plan fingerprint changed. Review the new result.':latestReceipt.proposal.id!==proposal?.id?'Previous confirmed plan receipt; it belongs to a different proposal than the one currently inspected.':'Compatible with current proposal, source and exact plan'});
+ const state=()=>({version,base,baseline,baselineVerification,source,sourceRevision,sourceFingerprint:fingerprint(base),proposal:proposal?{...proposal,validation:validateInterpretation(base,proposal)}:null,changed,changedPlan,changedVerification,planFingerprint,plannedProposalId,plannedProposal,planIsCurrent:!!changedPlan&&plannedProposalId===proposal?.id,history,latestReceipt,receiptCompatibility:receiptCompatibility(),modelState:'CPU calculation only. Frozen Qwen archive: 0/12 usable proposals. No live inference or model transmission.'});
  return http.createServer(async(req,res)=>{
   const json=(code,body)=>{res.writeHead(code,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(body));};
   try{
@@ -20,13 +28,17 @@ export function createDesk(){
    if(req.method==='GET'&&path==='/api/receipt'){if(!latestReceipt)return json(404,{error:'receipt_unavailable'});res.writeHead(200,{'Content-Type':'application/json','Content-Disposition':'attachment; filename="local-scenario-review.json"'});return res.end(JSON.stringify({receipt:latestReceipt,compatibility:receiptCompatibility()},null,2));}
    if(req.method==='POST'&&path.startsWith('/api/')){
     if(req.headers.origin&&req.headers.origin!==`http://${req.headers.host}`)return json(403,{error:'origin_rejected'});
-    let text='';for await(const chunk of req){text+=chunk;if(text.length>12000)return json(413,{error:'body_limit'});}const input=JSON.parse(text||'{}');
+    const chunks=[];let bytes=0;for await(const chunk of req){bytes+=chunk.length;if(bytes>16000)return json(413,{error:'body_limit',message:'Request exceeds 16,000 bytes.'});chunks.push(chunk);}const input=JSON.parse(Buffer.concat(chunks).toString('utf8')||'{}');
+    if(!boundedRequest(input))return json(400,{error:'input_shape_limit',message:'Request must be a bounded object (depth <= 8, entries <= 1000).'});
+    if(['propose','import','calendar','reset'].includes(path.slice(5))&&input.sourceFingerprint!==fingerprint(base))return json(409,{error:'stale_source',message:'Source changed or fingerprint missing; reload and inspect the current source before continuing.'});
     if(path==='/api/propose'){
-     if(input.method==='manual')proposal=manualProposal(base,input.input||{});
+     const inspectedSource=fingerprint(base);let nextProposal;
+     if(input.method==='manual')nextProposal=manualProposal(base,input.input||{});
      else if(input.method==='recorded'){
-      try{const evaluation=JSON.parse(await readFile(root+'artifacts/model-evaluation.json','utf8'));proposal=recordedProposal(evaluation.cases.find(c=>c.id===input.caseId),base);}catch{proposal=recordedProposal(null,base);}
-     }else proposal=ruleProposal(base,input.text||'');
-     proposal={...proposal,id:randomUUID()};proposal.proposalHash=fingerprint(proposal);history.push({event:'proposed',id:proposal.id,status:proposal.status});version++;
+      try{const evaluation=JSON.parse(await readFile(root+'artifacts/model-evaluation.json','utf8'));nextProposal=recordedProposal(evaluation.cases.find(c=>c.id===input.caseId),base);}catch{nextProposal=recordedProposal(null,base);}
+     }else nextProposal=ruleProposal(base,input.text||'');
+     if(inspectedSource!==fingerprint(base))return json(409,{error:'stale_source',message:'Source changed while preparing the proposal; inspect again.'});
+     proposal={...nextProposal,id:randomUUID()};proposal.proposalHash=fingerprint(proposal);history.push({event:'proposed',id:proposal.id,status:proposal.status});version++;
     }else if(path==='/api/confirm'){
      if(!proposal||input.proposalId!==proposal.id||input.proposalHash!==proposal.proposalHash||input.sourceFingerprint!==proposal.sourceFingerprint)return json(409,{error:'stale_inspection',message:'Proposal changed; inspect the latest interpretation before confirming.'});
      const v=validateInterpretation(base,proposal);if(!v.valid)return json(409,{error:v.status,message:v.issues.join(' ')});
@@ -42,9 +54,15 @@ export function createDesk(){
     }else if(path==='/api/reject'){
      if(proposal)history.push({event:'rejected',id:proposal.id,sourceFingerprint:proposal.sourceFingerprint});proposal=null;version++;
     }else if(path==='/api/calendar'){
-     base=structuredClone(base);base.revision=Number(base.revision)+1;base.outages.push({machine:'M2',start:8,end:9});baseline=solve(base);baselineVerification=check(base,baseline);changed=null;changedPlan=null;changedVerification=null;planFingerprint=null;plannedProposalId=null;plannedProposal=null;plannedBudget=null;history.push({event:'calendar_changed',sourceFingerprint:fingerprint(base)});version++;
+     const next=structuredClone(base);next.revision=sourceRevision+1;next.outages.push({machine:'M2',start:8,end:9});const issues=validateScenario(next);if(issues.length)return json(400,{error:'invalid_baseline',message:issues.join(' ')});
+     base=next;sourceRevision++;baseline=solve(base);baselineVerification=check(base,baseline);clearPlan();history.push({event:'calendar_changed',sourceFingerprint:fingerprint(base),sourceRevision});version++;
+    }else if(path==='/api/import'){
+     const issues=validateScenario(input.baseline);if(issues.length)return json(400,{error:'invalid_baseline',message:issues.join(' '),issues});
+     const next=structuredClone(input.baseline);next.revision=sourceRevision+1;const nextPlan=solve(next),nextVerification=check(next,nextPlan);
+     if(nextPlan.status==='INVALID'||nextVerification.status==='INVALID')return json(400,{error:'invalid_baseline',message:'Baseline failed planner or independent verification.'});
+     source={kind:'user-input',label:'Local user-supplied baseline',inputFingerprint:fingerprint(input.baseline),suppliedRevision:input.baseline.revision};sourceRevision++;base=next;baseline=nextPlan;baselineVerification=nextVerification;proposal=null;clearPlan();history.push({event:'baseline_imported',sourceFingerprint:fingerprint(base),sourceRevision,inputFingerprint:source.inputFingerprint});version++;
     }else if(path==='/api/reset'){
-     base=scenario();baseline=solve(base);baselineVerification=check(base,baseline);proposal=null;changed=null;changedPlan=null;changedVerification=null;latestReceipt=null;planFingerprint=null;plannedProposalId=null;plannedProposal=null;plannedBudget=null;history=[];version++;
+     base=scenario();base.revision=++sourceRevision;source={kind:'synthetic-fixture',label:'Synthetic fixture A'};baseline=solve(base);baselineVerification=check(base,baseline);proposal=null;clearPlan();history.push({event:'synthetic_reset',sourceFingerprint:fingerprint(base),sourceRevision});version++;
     }else return json(404,{error:'unknown_action'});return json(200,state());
    }
    const file={'/':'index.html','/app.mjs':'app.mjs','/chart-layout.mjs':'chart-layout.mjs','/style.css':'style.css'}[path];if(!file)return json(404,{error:'not_found'});
